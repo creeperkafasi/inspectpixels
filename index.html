@@ -61,6 +61,12 @@
         <input type="range" min="0" max="100" id="inspectorOpacity" value="100" oninput="updateConfig()">
       </td>
     </tr>
+    <tr>
+      <th>Select Image</th>
+      <td colspan="4">
+        <input type="button" value="Select Image" onclick="selectImage()">
+      </td>
+    </tr>
   </table>
 
   <div id="toolsWrapper">
@@ -124,7 +130,7 @@
 </script>
 
 <script>
-  img.onclick = () => {
+  function selectImage() {
     const input = document.createElement("input")
     input.type = "file"
     input.accept = "image/*"
@@ -182,7 +188,7 @@
       img.offsetLeft,
       img.offsetTop
     ]
-    console.log({pixelSize, inspectorSize, offset});
+    console.log({ pixelSize, inspectorSize, offset });
 
     pixelBorder.style.width = `${pixelSize[0]}px`;
     pixelBorder.style.height = `${pixelSize[1]}px`;
