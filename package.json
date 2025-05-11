@@ -1,0 +1,15 @@
+{
+  "name": "sss-lsb",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "live": "browser-sync start --config bs-config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "browser-sync": "^3.0.4"
+  }
+}

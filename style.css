@@ -1,0 +1,86 @@
+img#output {
+    width: 80%;
+    height: auto;
+    image-rendering: crisp-edges;
+    cursor: none;
+    background-color: #ddd;
+    background-image:
+        linear-gradient(45deg, #bbb 25%, transparent 25%, transparent 75%, #bbb 75%, #bbb),
+        linear-gradient(45deg, #bbb 25%, transparent 25%, transparent 75%, #bbb 75%, #bbb);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+}
+
+#toolsWrapper {
+    --inspector-width: 100px;
+    aspect-ratio: 1;
+    width: var(--inspector-width);
+}
+
+#inspector {
+    width: var(--inspector-width);
+    aspect-ratio: 1;
+    pointer-events: none;
+    position: absolute;
+    /* border-radius: 50%;
+    overflow: hidden;
+    clip-path: circle(50% at 50% 50%); */
+    background-color: black;
+    display: grid;
+    gap: 0;
+}
+
+#inspector .channel {
+    display: grid;
+    /* grid-template-columns: repeat(2, 1fr); */
+    grid-template-rows: repeat(8, 1fr);
+    gap: 0;
+    opacity: 1;
+}
+
+.channel-0 {
+    background-color: rgba(255, 0, 0, 1);
+}
+
+.channel-1 {
+    background-color: rgba(0, 255, 0, 1);
+}
+
+.channel-2 {
+    background-color: rgba(0, 0, 255, 1);
+}
+
+.channel-3 {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.bit {
+    opacity: var(--bit-opacity);
+    font-size: 10px;
+    text-align: center;
+}
+
+.bit.off {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#pixelBorder {
+    position: absolute;
+    border: solid white;
+    box-sizing: border-box;
+    background-color: transparent;
+    pointer-events: none;
+}
+
+table td:nth-child(1) {
+    border-left: none;
+}
+table td {
+    border-left: 2px solid black;
+    padding: 3px;
+}
+
+#footer {
+    text-align: end;
+}

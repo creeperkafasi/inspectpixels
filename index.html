@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Image Pixel Viewer</title>
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+  <img src="images/DESU.png" alt="" id="output">
+
+  <br>
+  <h1>Config</h1>
+  <table>
+    <tr>
+      <th>Channel</th>
+      <td>
+        <input type="checkbox" id="red" onchange="updateConfig()" checked>
+        <label for="red">Red</label>
+      </td>
+      <td>
+        <input type="checkbox" id="green" onchange="updateConfig()" checked>
+        <label for="green">Green</label>
+      </td>
+      <td>
+        <input type="checkbox" id="blue" onchange="updateConfig()" checked>
+        <label for="blue">Blue</label>
+      </td>
+      <td>
+        <input type="checkbox" id="alpha" onchange="updateConfig()">
+        <label for="alpha">Alpha</label>
+      </td>
+    </tr>
+    <tr>
+      <th>Bit Opacity</th>
+      <td colspan="4">
+        <select id="bitOpacity" onchange="updateConfig()">
+          <option value="linear">Linear</option>
+          <option value="real">Exponential (2ⁿ)</option>
+          <option value="constant">Constant</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th>Linear Min. Opacity</th>
+      <td colspan="4">
+        <input type="range" min="0" max="100" id="bitMinOpacity" value="20" oninput="updateConfig()">
+      </td>
+    </tr>
+    <tr>
+      <th>Constant Opacity</th>
+      <td colspan="4">
+        <input type="range" min="0" max="100" id="bitConstantOpacity" value="100" onchange="updateConfig()">
+      </td>
+    </tr>
+    <tr>
+      <th>Inspector Opacity</th>
+      <td colspan="4">
+        <input type="range" min="0" max="100" id="inspectorOpacity" value="100" oninput="updateConfig()">
+      </td>
+    </tr>
+  </table>
+
+  <div id="toolsWrapper">
+    <div id="inspector"></div>
+    <div id="pixelBorder"></div>
+  </div>
+
+  <div id="footer">
+    Made with ❤️ by <a href="https://deniz.is-a.dev">Deniz Tunç</a>
+  </div>
+
+</body>
+
+<!-- Config -->
+<script>
+  /** @type {"linear"| "real" | "constant" } */
+  let bitOpacity = "real"; // "linear", "real", "none"
+  let bitMinOpacity = 20; // for linear
+  let bitConstantOpacity = 100; // for constant
+  let channels = [0, 1, 2]; // 0: red, 1: green, 2: blue, 3: alpha
+  let inspectorOpacity = 100; // for inspector
+  const bits = 8;
+  document.getElementById("red").checked = channels.includes(0);
+  document.getElementById("green").checked = channels.includes(1);
+  document.getElementById("blue").checked = channels.includes(2);
+  document.getElementById("alpha").checked = channels.includes(3);
+  document.getElementById("bitOpacity").value = bitOpacity;
+  document.getElementById("bitMinOpacity").value = bitMinOpacity;
+  document.getElementById("bitConstantOpacity").value = bitConstantOpacity;
+  document.getElementById("inspectorOpacity").value = inspectorOpacity;
+  function updateConfig() {
+    channels = [];
+    if (document.getElementById("red").checked) {
+      channels.push(0);
+    }
+    if (document.getElementById("green").checked) {
+      channels.push(1);
+    }
+    if (document.getElementById("blue").checked) {
+      channels.push(2);
+    }
+    if (document.getElementById("alpha").checked) {
+      channels.push(3);
+    }
+    bitOpacity = document.getElementById("bitOpacity").value;
+    bitMinOpacity = Number(document.getElementById("bitMinOpacity").value);
+    bitConstantOpacity = Number(document.getElementById("bitConstantOpacity").value);
+    inspector.style.opacity = `${document.getElementById("inspectorOpacity").value}%`;
+    generateInspector();
+  }
+
+</script>
+
+<!--Defines-->
+<script>
+  const powersof2 = [1, 2, 4, 8, 16, 32, 64, 128];
+  const inspector = document.getElementById("inspector");
+  const pixelBorder = document.getElementById("pixelBorder");
+  /** @type {HTMLImageElement} */
+  const img = document.getElementById('output');
+</script>
+
+<script>
+  img.onclick = () => {
+    const input = document.createElement("input")
+    input.type = "file"
+    input.accept = "image/*"
+    input.onchange = () => {
+      const file = input.files[0]
+      if (!file) return
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const dataURL = e.target.result
+        const tempImg = new Image()
+        const newWidthInput = prompt("Enter image width in pixels\n(Leave empty for original width, not recommended):", "100")
+        let newWidth = parseInt(newWidthInput, 10)
+
+        tempImg.onload = () => {
+          if (isNaN(newWidth) || newWidth <= 0) {
+            newWidth = tempImg.width;
+          }
+          const newHeight = Math.round((tempImg.height / tempImg.width) * newWidth)
+          console.log(newWidth, newHeight)
+
+          const canvas = document.createElement("canvas")
+          canvas.width = newWidth
+          canvas.height = newHeight
+          const ctx = canvas.getContext("2d")
+          ctx.drawImage(tempImg, 0, 0, newWidth, newHeight)
+
+          img.src = canvas.toDataURL("image/png")
+        }
+        tempImg.src = dataURL
+        tempImg.remove()
+      }
+      reader.readAsDataURL(file)
+    }
+    input.click()
+  }
+</script>
+
+</script>
+
+<script>
+  img.onload = () => {
+    // console.log(img.clientWidth, img.clientHeight);
+    // console.log(img.naturalWidth, img.naturalHeight);
+    //console.log(inspector.style.display)
+    const pixelSize = [
+      (img.clientWidth / img.naturalWidth),
+      (img.clientHeight / img.naturalHeight)
+    ]
+    const inspectorSize = [
+      inspector.clientWidth,
+      inspector.clientHeight
+    ]
+    const offset = [
+      img.offsetLeft,
+      img.offsetTop
+    ]
+    console.log({pixelSize, inspectorSize, offset});
+
+    pixelBorder.style.width = `${pixelSize[0]}px`;
+    pixelBorder.style.height = `${pixelSize[1]}px`;
+    pixelBorder.style.borderWidth = `${pixelSize[0] / 200}px`;
+
+
+    img.addEventListener("mouseout", (_) => {
+      inspector.style.top = "";
+      inspector.style.left = "";
+      generateInspector();
+    })
+    img.addEventListener("mousemove", (e) => {
+      const x = Math.floor((e.offsetX) / pixelSize[0]) * pixelSize[0] + offset[0] + pixelSize[0];
+      const y = Math.floor((e.offsetY) / pixelSize[1]) * pixelSize[1] + offset[1] + pixelSize[1];
+      //console.log(x, y);
+      inspector.style.left = `${x}px`;
+      inspector.style.top = `${y}px`;
+
+      pixelBorder.style.left = `${Math.floor((e.offsetX) / pixelSize[0]) * pixelSize[0] + offset[0]}px`;
+      pixelBorder.style.top = `${Math.floor((e.offsetY) / pixelSize[1]) * pixelSize[1] + offset[1]}px`;
+
+      const pixel_x = Math.floor(e.offsetX / pixelSize[0]);
+      const pixel_y = Math.floor(e.offsetY / pixelSize[1]);
+      const pixel_i = (pixel_y * img.naturalWidth + pixel_x) * 4;
+      const pixel = [
+        data[pixel_i],
+        data[pixel_i + 1],
+        data[pixel_i + 2],
+        data[pixel_i + 3]
+      ];
+
+      const pixel_inverted = [
+        255 - pixel[0],
+        255 - pixel[1],
+        255 - pixel[2]
+      ];
+      pixelBorder.style.borderColor = `rgb(${pixel_inverted[0]}, ${pixel_inverted[1]}, ${pixel_inverted[2]})`;
+
+      console.log(`Pixel (${pixel_x}, ${pixel_y}): [${pixel}]`);
+      const bitValues = pixel.map((c) => {
+        return c.toString(2).padStart(8, '0').split("").map(Number);
+      });
+      console.log(JSON.stringify(bitValues));
+      channels.forEach((c) => {
+        for (let b = 0; b < bitValues[c].length; b++) {
+          const bit = document.getElementById(`channel-${c}-bit-${b}`);
+          // bit.innerText = `${bitValues[c][b]}`;
+          // bit.style.color = `hsl(1, 0%, ${100*(1 - bitValues[c][b])}%)`;
+          if (bitValues[c][b] === 1) {
+            bit.classList.remove("off");
+          } else {
+            bit.classList.add("off");
+          }
+        }
+      })
+
+    })
+
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    const data = ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight).data;
+
+
+
+  }
+</script>
+
+<!--Generate the inspector-->
+<script>
+  function generateInspector() {
+    while (inspector.hasChildNodes()) {
+      inspector.removeChild(inspector.firstChild);
+    }
+    inspector.style.gridTemplateColumns = `repeat(${channels.length}, 1fr)`;
+
+    channels.forEach((c) => {
+      console.log("channel", c);
+      const channel = document.createElement("div");
+      channel.classList.add("channel");
+      channel.style.gridTemplateRows = `repeat(${bits.length}, 1fr)`;
+      channel.id = `channel-${c}`;
+      inspector.appendChild(channel);
+
+      for (let b = 0; b < bits; b++) {
+        const bit = document.createElement("div");
+        bit.classList.add("bit");
+        bit.classList.add(`bit-${b}`);
+        bit.classList.add(`channel-${c}`);
+        // console.log(`${(bits - b) * 50 / bits + 50}%`);
+        switch (bitOpacity) {
+          case "linear":
+            bit.style.setProperty("--bit-opacity", `${(bits - b - 1) * (100 - bitMinOpacity) / bits + bitMinOpacity}%`);
+            break;
+          case "real":
+            bit.style.setProperty("--bit-opacity", `${powersof2[bits - b - 1] / 128 * 100}%`);
+            break;
+          case "constant":
+            bit.style.setProperty("--bit-opacity", `${bitConstantOpacity}%`);
+            break;
+          default:
+            bit.style.setProperty("--bit-opacity", "100%");
+            break;
+        }
+        bit.id = `channel-${c}-bit-${b}`;
+        channel.appendChild(bit);
+      }
+    })
+  }
+  generateInspector();
+</script>
+
+<script>
+
+</script>
+
+</html>
