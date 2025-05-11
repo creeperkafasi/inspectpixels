@@ -1,6 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,300&display=swap');
+@import url('https://unpkg.com/@catppuccin/palette/css/catppuccin.css');
+
+:root {
+    --ctp-text: var(--ctp-mocha-text);
+    --ctp-base: var(--ctp-mocha-base);
+    --ctp-crust: var(--ctp-mocha-crust);
+    --ctp-surface0: var(--ctp-mocha-surface0);
+    --ctp-surface1: var(--ctp-mocha-surface1);
+    --ctp-mauve: var(--ctp-mocha-mauve);
+    --ctp-peach: var(--ctp-mocha-peach);
+    --ctp-yellow: var(--ctp-mocha-yellow);
+    --ctp-red: var(--ctp-mocha-red);
+    --ctp-blue: var(--ctp-mocha-blue);
+    --ctp-green: var(--ctp-mocha-green);
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --ctp-text: var(--ctp-latte-text);
+        --ctp-base: var(--ctp-latte-base);
+        --ctp-crust: var(--ctp-latte-crust);
+        --ctp-surface0: var(--ctp-latte-surface0);
+        --ctp-surface1: var(--ctp-latte-surface1);
+        --ctp-mauve: var(--ctp-latte-mauve);
+        --ctp-peach: var(--ctp-latte-peach);
+        --ctp-yellow: var(--ctp-latte-yellow);
+        --ctp-red: var(--ctp-latte-red);
+        --ctp-blue: var(--ctp-latte-blue);
+        --ctp-green: var(--ctp-latte-green);
+    }
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--ctp-base);
+    color: var(--ctp-text);
+}
+
+h1 {
+    font-size: 2rem;
+    margin: 0;
+    padding: 0;
+}
+
+/* Form controls themed with Catppuccin palette */
+select,
+button,
+input[type="button"],
+input[type="submit"] {
+    font: inherit;
+    background-color: var(--ctp-surface0);
+    color: var(--ctp-text);
+    border: 1px solid var(--ctp-crust);
+    border-radius: 4px;
+    padding: 0.5em 1em;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+select:hover,
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover {
+    background-color: var(--ctp-surface1);
+    border-color: var(--ctp-mauve);
+}
+
+select:focus,
+button:focus,
+input[type="button"]:focus,
+input[type="submit"]:focus {
+    outline: 2px solid var(--ctp-green);
+    outline-offset: 2px;
+}
+
+/* Range input */
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--ctp-green);
+    cursor: pointer;
+}
+
+/* Checkbox */
+input[type="checkbox"] {
+    accent-color: var(--ctp-green);
+    width: 1.2em;
+    height: 1.2em;
+    cursor: pointer;
+}
+
+a {
+    color: var(--ctp-blue);
+    text-decoration: none;
+}
+
 img#output {
-    width: 80%;
+    width: 80vw;
+    max-width: 800px;
     height: auto;
+    margin: 2rem;
     image-rendering: crisp-edges;
     cursor: none;
     background-color: #ddd;
@@ -73,14 +171,34 @@ img#output {
     pointer-events: none;
 }
 
+table {
+    border-collapse: collapse;
+}
+
+table tr {
+    border-bottom: 2px solid;
+}
+
 table td:nth-child(1) {
     border-left: none;
 }
+
 table td {
-    border-left: 2px solid black;
+    border-left: 2px solid;
     padding: 3px;
 }
 
+th, td {
+    padding: 1em;
+}
+
+th {
+    text-align: right;
+}
+td {
+    text-align: center;
+}
+
 #footer {
-    text-align: end;
+    text-align: center;
 }
