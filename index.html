@@ -167,6 +167,10 @@
     }
     input.click()
   }
+  img.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    selectImage();
+  })
 </script>
 
 </script>
@@ -200,7 +204,18 @@
       inspector.style.left = "";
       generateInspector();
     })
-    img.addEventListener("mousemove", (e) => {
+    /** @param {TouchEvent | MouseEvent} e */
+    function inspectorMovement(e) {
+      e.preventDefault()
+      if (e.type === "touchmove") {
+        e.offsetX = e.touches[0].clientX - img.offsetLeft;
+        e.offsetY = e.touches[0].clientY - img.offsetTop;
+        if (e.offsetX < 0 || e.offsetY < 0 || e.offsetX > img.clientWidth || e.offsetY > img.clientHeight) {
+          inspector.style.top = "";
+          inspector.style.left = "";
+          return;
+        }
+      }
       const x = Math.floor((e.offsetX) / pixelSize[0]) * pixelSize[0] + offset[0] + pixelSize[0];
       const y = Math.floor((e.offsetY) / pixelSize[1]) * pixelSize[1] + offset[1] + pixelSize[1];
       //console.log(x, y);
@@ -244,8 +259,11 @@
           }
         }
       })
+    }
 
-    })
+    img.addEventListener("touchmove", inspectorMovement)
+    img.addEventListener("mousemove", inspectorMovement)
+
 
     const canvas = document.createElement("canvas");
     canvas.width = img.naturalWidth;
