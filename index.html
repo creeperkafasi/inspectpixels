@@ -208,8 +208,10 @@
     function inspectorMovement(e) {
       e.preventDefault()
       if (e.type === "touchmove") {
-        e.offsetX = e.touches[0].clientX - img.offsetLeft;
-        e.offsetY = e.touches[0].clientY - img.offsetTop;
+        /** @type {Touch} */
+        let touch = e.touches[0];
+        e.offsetX = touch.pageX - img.offsetLeft;
+        e.offsetY = touch.pageY - img.offsetTop;
         if (e.offsetX < 0 || e.offsetY < 0 || e.offsetX > img.clientWidth || e.offsetY > img.clientHeight) {
           inspector.style.top = "";
           inspector.style.left = "";
